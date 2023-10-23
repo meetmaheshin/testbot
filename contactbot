@@ -1,0 +1,34 @@
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+
+# Replace 'YOUR_BOT_TOKEN' with your actual bot token
+TOKEN = '6099368990:AAH3IySLuY8VDJON-GaFh562bSFHVoZRLrg'
+bot = telegram.Bot(token=TOKEN)
+
+
+# Function to start the bot and send a message with the "Share contact" button
+def start(update, context):
+    reply_markup = telegram.ReplyKeyboardMarkup([[telegram.KeyboardButton('Share contact', request_contact=True)]])
+    update.message.reply_text('Example', reply_markup=reply_markup)
+
+
+# Function to handle contact sharing
+def handle_contact(update, context):
+    user = update.message.from_user
+    contact = update.message.contact
+    update.message.reply_text(f"Contact shared by {user.first_name}: {contact.phone_number}")
+
+
+def main():
+    updater = Updater(token=TOKEN, use_context=True)
+    dp = updater.dispatcher
+
+    dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(MessageHandler(Filters.contact, handle_contact))
+
+    updater.start_polling()
+    updater.idle()
+
+
+if __name__ == '__main__':
+    main()
